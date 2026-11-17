@@ -7,6 +7,7 @@
     <!-- PWA Manifest Link -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#4f46e5">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3236/3236940.png">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Noto Sans Sinhala & Inter -->
@@ -105,10 +106,10 @@
 
     <main class="max-w-3xl mx-auto px-4 pt-5 space-y-6">
 
-        <!-- Install App Button (Hidden by default until PWA prompt is ready) -->
-        <button id="install-btn" class="hidden w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 active:scale-[0.99] text-white font-bold text-sm sm:text-base shadow-lg shadow-emerald-500/25 transition flex items-center justify-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-            <span id="install-btn-text">ඇප් එක ෆෝන් එකට දාගන්න (Install App)</span>
+        <!-- ALWAYS VISIBLE Install / Download App Button -->
+        <button id="install-btn" onclick="handleInstallClick()" class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 active:scale-[0.99] text-white font-bold text-sm sm:text-base shadow-lg shadow-emerald-500/25 transition flex items-center justify-center gap-2">
+            <svg class="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            <span id="install-btn-text">ඇප් එක ෆෝන් එකට දාගන්න (Download App)</span>
         </button>
 
         <!-- Toast / Status Notification Banner -->
@@ -262,12 +263,30 @@
                 <p data-i18n="mobileTipTitle" class="font-bold">දුරකථනයෙන් (Mobile) භාවිතා කරන විට වැදගත් උපදෙස්:</p>
                 <ul class="list-disc list-inside space-y-1 text-xs text-amber-800 dark:text-amber-300/80">
                     <li data-i18n="mobileTip1">වෙබ් ඇප් එක විවෘත කළ පසු ඉහත ඇති <strong>"ඇලට් සක්‍රීය කරන්න"</strong> බොත්තම ඔබා Notification සහ Sound සඳහා අවසර ලබා දෙන්න.</li>
-                    <li data-i18n="mobileTip2">නියමිත වේලාවට කටහඬ (Voice Alert) නිවැරදිව ක්‍රියාත්මක වීමට මෙම බ්‍රවුසර් ටැබ් එක විවෘතව තබන්න (හෝ ඉහත <strong>Install App</strong> බොත්තම භාවිතා කරන්න).</li>
+                    <li data-i18n="mobileTip2">නියමිත වේලාවට කටහඬ (Voice Alert) නිවැරදිව ක්‍රියාත්මක වීමට මෙම බ්‍රවුසර් ටැබ් එක විවෘතව තබන්න (හෝ ඉහත <strong>Download App</strong> බොත්තම භාවිතා කරන්න).</li>
                 </ul>
             </div>
         </section>
 
     </main>
+
+    <!-- Install Guide Fallback Modal (If browser doesn't trigger native prompt) -->
+    <div id="install-guide-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between">
+                <h3 data-i18n="installGuideTitle" class="text-lg font-bold text-slate-900 dark:text-white">📲 ඇප් එක දාගන්නා ආකාරය</h3>
+                <button onclick="document.getElementById('install-guide-modal').classList.add('hidden')" class="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500">✕</button>
+            </div>
+            <div class="space-y-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                <p data-i18n="installStep1">1. බ්‍රවුසරයේ උඩ දකුණු කෙළවරේ ඇති <strong>තිත් 3 (⋮)</strong> ඔබන්න.</p>
+                <p data-i18n="installStep2">2. එහි ඇති <strong>"Share..."</strong> (බෙදාගන්න) ඔබන්න.</p>
+                <p data-i18n="installStep3">3. පහළට එන ලැයිස්තුවෙන් <strong>"Add to Home screen"</strong> හෝ <strong>"Install app"</strong> තෝරා <strong>Add</strong> දෙන්න.</p>
+            </div>
+            <button onclick="document.getElementById('install-guide-modal').classList.add('hidden')" data-i18n="gotItBtn" class="w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm transition">
+                තේරුණා (Got it)
+            </button>
+        </div>
+    </div>
 
     <!-- Full-Screen Active Alarm Modal -->
     <div id="alarm-modal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
@@ -306,21 +325,39 @@
 
     <script>
         // ==========================================
-        // PWA INSTALL PROMPT HANDLER
+        // REGISTER SERVICE WORKER & PWA INSTALL HANDLER
         // ==========================================
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
+            });
+        }
+
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            const installBtn = document.getElementById('install-btn');
-            if (installBtn) {
-                installBtn.classList.remove('hidden');
-                installBtn.onclick = async () => {
-                    installBtn.classList.add('hidden');
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    deferredPrompt = null;
-                };
+        });
+
+        async function handleInstallClick() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    showToast(t('toastInstalled'));
+                }
+                deferredPrompt = null;
+            } else {
+                // Show easy step-by-step modal if native prompt isn't available yet
+                document.getElementById('install-guide-modal').classList.remove('hidden');
+            }
+        }
+
+        // Hide install button if already running as installed standalone app
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+                const installBtn = document.getElementById('install-btn');
+                if (installBtn) installBtn.classList.add('hidden');
             }
         });
 
@@ -334,7 +371,13 @@
                 appTitle: 'මතක් කරන්නා',
                 appSubtitle: 'Smart Voice Reminder',
                 langBtn: 'English',
-                installBtnText: 'ඇප් එක ෆෝන් එකට දාගන්න (Install App)',
+                installBtnText: 'ඇප් එක ෆෝන් එකට දාගන්න (Download App)',
+                installGuideTitle: '📲 ඇප් එක දාගන්නා ආකාරය',
+                installStep1: '1. බ්‍රවුසරයේ උඩ දකුණු කෙළවරේ ඇති <strong>තිත් 3 (⋮)</strong> ඔබන්න.',
+                installStep2: '2. එහි ඇති <strong>"Share..."</strong> (බෙදාගන්න) ඔබන්න.',
+                installStep3: '3. පහළට එන ලැයිස්තුවෙන් <strong>"Add to Home screen"</strong> හෝ <strong>"Install app"</strong> තෝරා <strong>Add</strong> දෙන්න.',
+                gotItBtn: 'තේරුණා (Got it)',
+                toastInstalled: '🎉 ඇප් එක සාර්ථකව Install වෙමින් පවතී!',
                 voiceSettingsTitle: '🔊 හඬ සහ ඇලට් සැකසුම් (Alert & Voice)',
                 voiceChecking: 'හඬ පද්ධතිය පරීක්ෂා කරමින් පවතී...',
                 voiceUnsupported: '⚠️ ඔබගේ බ්‍රවුසරය Voice (Text-to-Speech) සඳහා සහය නොදක්වයි.',
@@ -372,7 +415,7 @@
                 dailyBadge: '🔁 දිනපතා',
                 mobileTipTitle: 'දුරකථනයෙන් (Mobile) භාවිතා කරන විට වැදගත් උපදෙස්:',
                 mobileTip1: 'වෙබ් ඇප් එක විවෘත කළ පසු ඉහත ඇති <strong>"ඇලට් සක්‍රීය කරන්න"</strong> බොත්තම ඔබා Notification සහ Sound සඳහා අවසර ලබා දෙන්න.',
-                mobileTip2: 'නියමිත වේලාවට කටහඬ (Voice Alert) නිවැරදිව ක්‍රියාත්මක වීමට මෙම බ්‍රවුසර් ටැබ් එක විවෘතව තබන්න (හෝ ඉහත <strong>Install App</strong> බොත්තම භාවිතා කරන්න).',
+                mobileTip2: 'නියමිත වේලාවට කටහඬ (Voice Alert) නිවැරදිව ක්‍රියාත්මක වීමට මෙම බ්‍රවුසර් ටැබ් එක විවෘතව තබන්න (හෝ ඉහත <strong>Download App</strong> බොත්තම භාවිතා කරන්න).',
                 modalBadge: '⏰ මතක් කිරීමේ වේලාව හරි!',
                 snoozeBtn: '💤 විනාඩි 5කින් මතක් කරන්න',
                 dismissBtn: '✅ හරි (Dismiss)',
@@ -400,7 +443,13 @@
                 appTitle: 'Smart Voice Reminder',
                 appSubtitle: 'Audio & Visual Alert System',
                 langBtn: 'සිංහල',
-                installBtnText: 'Install App to Phone',
+                installBtnText: 'Download / Install App to Phone',
+                installGuideTitle: '📲 How to Install the App',
+                installStep1: '1. Tap the <strong>3 dots (⋮)</strong> at the top-right corner of your browser.',
+                installStep2: '2. Tap <strong>"Share..."</strong> from the menu.',
+                installStep3: '3. Select <strong>"Add to Home screen"</strong> or <strong>"Install app"</strong> and tap <strong>Add</strong>.',
+                gotItBtn: 'Got it',
+                toastInstalled: '🎉 Installing App to your device!',
                 voiceSettingsTitle: '🔊 Alert & Voice Settings',
                 voiceChecking: 'Checking voice synthesis engine...',
                 voiceUnsupported: '⚠️ Your browser does not support Voice (Text-to-Speech).',
@@ -438,7 +487,7 @@
                 dailyBadge: '🔁 Daily',
                 mobileTipTitle: 'Important Tips for Mobile Users:',
                 mobileTip1: 'Tap <strong>"Enable Alerts"</strong> above after opening the app to grant Notification and Sound permissions.',
-                mobileTip2: 'Keep this browser tab open for reliable voice alerts at the scheduled time (or use the <strong>Install App</strong> button above).',
+                mobileTip2: 'Keep this browser tab open for reliable voice alerts at the scheduled time (or use the <strong>Download App</strong> button above).',
                 modalBadge: '⏰ Reminder Time Reached!',
                 snoozeBtn: '💤 Snooze 5 Mins',
                 dismissBtn: '✅ Dismiss',
@@ -482,9 +531,10 @@
             document.getElementById('lang-btn-text').textContent = t('langBtn');
             document.getElementById('install-btn-text').textContent = t('installBtnText');
 
+            const htmlKeys = ['mobileTip1', 'mobileTip2', 'installStep1', 'installStep2', 'installStep3'];
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
-                if (key === 'mobileTip1' || key === 'mobileTip2') {
+                if (htmlKeys.includes(key)) {
                     el.innerHTML = t(key);
                 } else {
                     el.textContent = t(key);
